@@ -67,11 +67,17 @@ class Crawler(object):
         assert not self.crawling, "Crawling already taking place"
         self.crawling = True
 
+        close_if_idle = kwargs.get("close_if_idle", True)
+        try:
+            close_if_idle = eval(close_if_idle)
+        except SyntaxError:
+            close_if_idle = True
+
         try:
             self.spider = self._create_spider(*args, **kwargs)
             self.engine = self._create_engine()
             start_requests = iter(self.spider.start_requests())
-            yield self.engine.open_spider(self.spider, start_requests)
+            yield self.engine.open_spider(self.spider, start_requests, close_if_idle=close_if_idle)
             yield defer.maybeDeferred(self.engine.start)
         except Exception:
             # In Python 2 reraising an exception after yield discards
