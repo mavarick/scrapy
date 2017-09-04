@@ -70,7 +70,7 @@ class Crawler(object):
         close_if_idle = kwargs.get("close_if_idle", True)
         try:
             close_if_idle = eval(close_if_idle)
-        except SyntaxError:
+        except (SyntaxError, TypeError):
             close_if_idle = True
 
         try:
